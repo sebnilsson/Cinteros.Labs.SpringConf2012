@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cinteros.Labs.SpringConf2012.Core", "Cinteros.Labs.SpringConf2012.Core\Cinteros.Labs.SpringConf2012.Core.csproj", "{94844BE1-70A3-49D9-B980-33B1ED0FC227}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cinteros.Labs.SpringConf2012.Website", "Cinteros.Labs.SpringConf2012.Website\Cinteros.Labs.SpringConf2012.Website.csproj", "{23418A6F-44A4-442E-93C7-571384F615C3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{94844BE1-70A3-49D9-B980-33B1ED0FC227}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94844BE1-70A3-49D9-B980-33B1ED0FC227}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94844BE1-70A3-49D9-B980-33B1ED0FC227}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94844BE1-70A3-49D9-B980-33B1ED0FC227}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23418A6F-44A4-442E-93C7-571384F615C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23418A6F-44A4-442E-93C7-571384F615C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23418A6F-44A4-442E-93C7-571384F615C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23418A6F-44A4-442E-93C7-571384F615C3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
