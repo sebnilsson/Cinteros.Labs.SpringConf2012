@@ -4,18 +4,18 @@ namespace Cinteros.Labs.SpringConf2012 {
     [DataContract(Name = "bugPriority")]
     public class BugPriority {
         static BugPriority() {
-            Low = new BugPriority { ID = 1, Title = "Low", Multiplier = 0.8 };
-            Normal = new BugPriority { ID = 2, Title = "Normal", Multiplier = 1 };
-            High = new BugPriority { ID = 3, Title = "High", Multiplier = 2 };
-            Critial = new BugPriority { ID = 4, Title = "Critial", Multiplier = 3 };
+            Low = new BugPriority { Index = 0, Title = "Low", Multiplier = 0.8 };
+            Normal = new BugPriority { Index = 1, Title = "Normal", Multiplier = 1 };
+            High = new BugPriority { Index = 2, Title = "High", Multiplier = 2 };
+            Critial = new BugPriority { Index = 3, Title = "Critial", Multiplier = 3 };
         }
 
         private BugPriority() {
 
         }
 
-        [DataMember(Name = "id")]
-        public int ID { get; private set; }
+        [DataMember(Name = "index")]
+        public int Index { get; private set; }
         [DataMember(Name = "multiplier")]
         public double Multiplier { get; private set; }
         [DataMember(Name = "title")]

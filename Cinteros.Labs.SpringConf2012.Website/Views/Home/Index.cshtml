@@ -3,13 +3,13 @@
 <table id="data-table">
     <thead>
         <tr>
-            <th id="head-title">Title</th>
-            <th id="head-prio">Priority</th>
-            <th id="head-multi"></th>
-            <th id="head-hours">Hours</th>
-            @*<th id="head-row-cost">Row Cost</th>*@
-            <th id="head-desc">Description</th>
-            <th id="head-controls"></th>
+            <th class="col-title">Title</th>
+            <th class="col-prio">Priority</th>
+            <th class="col-multi"></th>
+            <th class="col-hours">Hours</th>
+            <th class="col-row-cost">Row Cost</th>
+            <th class="col-desc">Description</th>
+            <th class="col-controls"></th>
         </tr>
     </thead>
     <tbody data-bind="foreach: bugs">
@@ -18,29 +18,31 @@
             <td><select data-bind="options: $root.priorities, value: priority, optionsText: 'title'"></select></td>
             <td data-bind="text: multiplier"></td>
             <td><input class="inp-hours" data-bind="value: hours" /></td>
-            @*<td data-bind="value: (rowCost * $root.hourlyPrice)" ></td>*@
+            <td data-bind="text: rowMultiplier().toFixed(2)" ></td>
             <td><input data-bind="value: description" /></td>
-            <td><a href="#" data-bind="click: $root.removeBug">Remove</a></td>
+            <td>
+                <a href="#" data-bind="click: $root.saveBug">Save</a>
+                <a href="#" data-bind="click: $root.removeBug">Remove</a>
+            </td>
         </tr>
     </tbody>
 </table>
 
-@*<h2>Add new bug</h2>
-<table>
-    <tbody>
-        <tr>
-            <td><input data-bind="value: name" /></td>
-            <td><select data-bind="options: $root.priorities, value: priority, optionsText: 'title'"></select></td>
-            <td data-bind="text: multiplier"></td>
-            <td><input data-bind="value: hours" /></td>
-            <td><input data-bind="value: decription" /></td>
-            <td><a href="#" data-bind="click: $root.removeBug">Remove</a></td>
-        </tr>
-    </tbody>
+@*<table id="add-table">
+    <tr>
+        <td class="col-title"><input id="add-title" /></th>
+        <td class="col-prio"><input id="add-prio" /></th>
+        <td class="col-multi"><input id="add-multi" /></th>
+        <td class="col-hours"><input id="add-hours" /></th>
+        <td class="col-row-cost"><input id="add-row-cost" /></th>
+        <td class="col-desc"><input id="add-desc" /></th>
+        <td class="col-controls"> </th>
+    </tr>
 </table>*@
 
 <div>
-    <button data-bind="click: addBug, enable: bugs().length < 10">Add bugg</button>(max 10)
+    @*<button data-bind="click: addBug, enable: bugs().length < 10">Add bug</button>(max 10)*@
+    <button data-bind="click: addBug">Add bug</button>
 </div>
 
 <div data-bind="visible: totalCharge() > 0">
