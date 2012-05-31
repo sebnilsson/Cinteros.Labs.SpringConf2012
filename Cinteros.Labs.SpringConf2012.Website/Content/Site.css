@@ -4,6 +4,27 @@
     font-size: 1em;
 }
 
+@media screen and (max-width: 320px) {
+    body{
+        font-size: 0.5em;
+    }
+}
+
+@media screen and (max-width: 640px) {
+    body{
+        font-size: 0.6em;
+    }
+    header {
+        text-align: center;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    body{
+        font-size: 0.7em;
+    }
+}
+
 #main-wrapper {
     background-color: #fff;
     max-width: 800px;
