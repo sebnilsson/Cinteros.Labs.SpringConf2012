@@ -54,6 +54,8 @@
                 url: '/api/Bugs/',
                 dataType: 'json',
                 success: function (bugList) {
+                    console.log('BugList:');
+                    console.log(bugList);
                     for (var i = 0; i < bugList.length; i++) {
                         var item = bugList[i];
                         self.bugs.push(self.getBugReportFromJson(item));
@@ -89,8 +91,9 @@
                     data: data,
                     dataType: 'json',
                     success: function (bugItem) {
-                        self.bugs.push(self.getBugReportFromJson(bugItem));
                         $button.removeAttr('disabled');
+
+                        bugsHub.bugAdded(bugItem);
                     },
                     error: function () {
                         $button.removeAttr('disabled');
@@ -104,10 +107,10 @@
 
                 var data = {
                     bug: {
-                        description: bug.description,
-                        hours: bug.hours,
+                        description: bug.description(),
+                        hours: bug.hours(),
                         id: bug.id,
-                        name: bug.name,
+                        name: bug.name(),
                     },
                     priorityIndex: bug.priority().index
                 };
@@ -119,6 +122,8 @@
                     success: function (jsonData) {
                         $button.show();
                         $button.parents('tr').find('input').removeAttr('disabled');
+
+                        bugsHub.bugUpdated(data.bug, data.priorityIndex || 0);
                     },
                     error: function () {
                         $button.show();
@@ -135,8 +140,8 @@
                     type: 'DELETE',
                     url: '/api/Bugs/' + bug.id,
                     dataType: 'json',
-                    success: function (jsonData) {
-                        self.bugs.remove(bug);
+                    success: function () {
+                        bugsHub.bugRemoved(bug);
                     },
                     error: function () {
                         $button.show();
@@ -148,9 +153,37 @@
 
         var viewModels = { bugs: new BugsViewModel() };
 
-        viewModels.bugs.bugs.subscribe(function (data) {
-            console.log(data);
-        });
+        var bugsHub = $.connection.bugsHub;
+        
+        bugsHub.addBug = function(bug) {
+            console.log('SignalR told me to add...');
+            viewModels.bugs.bugs.push(viewModels.bugs.getBugReportFromJson(bug));
+        };
+        bugsHub.updateBug = function(bug, priorityIndex) {
+            console.log('SignalR told me to update...');
+            var bugs = viewModels.bugs.bugs();
+            for (var i = 0; i < bugs.length; i++) {
+                var existingBug = bugs[i];
+                if (existingBug.id === bug.id) {
+                    existingBug.description(bug.description);
+                    existingBug.hours(bug.hours);
+                    existingBug.name(bug.name);
+                    existingBug.priority = ko.observable(viewModels.bugs.priorities[priorityIndex]);
+                }
+            }
+        };
+        bugsHub.removeBug = function(bug) {
+            console.log('SignalR told me to delete...');
+            var bugs = viewModels.bugs.bugs();
+            for (var i = 0; i < bugs.length; i++) {
+                var existingBug = bugs[i];
+                if (existingBug.id === bug.id) {
+                    viewModels.bugs.bugs.remove(existingBug);
+                }
+            }
+        };
+        
+        $.connection.hub.start();
         ko.applyBindings(viewModels.bugs);
 
     });

@@ -147,6 +147,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\BugsController.cs" />
+    <Compile Include="Controllers\BugsHub.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\BugPrioritiesController.cs" />
     <Compile Include="Global.asax.cs">
