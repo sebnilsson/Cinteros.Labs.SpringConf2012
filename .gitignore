@@ -55,4 +55,4 @@ packages/
 # Project-specific
 bundled-*.js
 bundled-*.css
-AppHbAppSettings.config
+AppHbSettings.config

@@ -1,24 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
+using System.Configuration;
 using System.Web.Http;
 
 namespace Cinteros.Labs.SpringConf2012.Website.Controllers {
     public class BugsController : ApiController {
-        private static ObservableCollection<Bug> repository = new ObservableCollection<Bug>();
+        private static BugRepository _repository;
+
         static BugsController() {
-            repository.Add(new Bug { Name = "Bug 1", Hours = 10, Priority = BugPriority.Normal, Description = string.Empty, });
-            repository.Add(new Bug { Name = "Bug 2", Hours = 33, Priority = BugPriority.Low, Description = string.Empty, });
-            repository.Add(new Bug { Name = "Bug 3", Hours = 20, Priority = BugPriority.High, Description = string.Empty, });
+            string connectionString = ConfigurationManager.AppSettings["RAVENHQ_CONNECTION_STRING"];
+            _repository = new BugRepository(connectionString);
         }
 
         public IEnumerable<Bug> Get() {
-            return repository;
+            return _repository.List();
         }
 
         public Bug Post(Bug bug) {
-            repository.Add(bug);
+            _repository.Add(bug);
             return bug;
         }
 
@@ -38,24 +37,11 @@ namespace Cinteros.Labs.SpringConf2012.Website.Controllers {
                     break;
             }
 
-            var existingBug = repository.FirstOrDefault(x => x.ID == bug.ID);
-            if(existingBug == null) {
-                return;
-            }
-
-            int index = repository.IndexOf(existingBug);
-            repository[index] = bug;
+            _repository.Update(bug);
         }
 
         public void Delete(string id) {
-            var guid = new Guid(id);
-            var bug = repository.FirstOrDefault(x => x.ID == guid);
-            if(bug == null) {
-                return;
-            }
-
-            int index = repository.IndexOf(bug);
-            repository.RemoveAt(index);
+            _repository.Delete(id);
         }
     }
 }

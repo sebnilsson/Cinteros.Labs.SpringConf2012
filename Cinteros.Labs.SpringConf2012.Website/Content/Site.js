@@ -6,6 +6,7 @@
         // Class to represent a row in the seat reservations grid
         var BugReport = function (id, name, priority, hours, description) {
             var self = this;
+
             self.description = ko.observable(description);
             self.hours = ko.observable(parseFloat(hours) || 0);
             self.id = id;
@@ -49,18 +50,21 @@
             });
 
             self.bugs = ko.observableArray();
-            $.ajax({
-                type: 'GET',
-                url: '/api/Bugs/',
-                dataType: 'json',
-                success: function (bugList) {
-                    for (var i = 0; i < bugList.length; i++) {
-                        var item = bugList[i];
-                        self.bugs.push(self.getBugReportFromJson(item));
-                    }
-                },
-                async: false
-            });
+            self.listBugs = function() {
+                $.ajax({
+                    type: 'GET',
+                    url: '/api/Bugs/',
+                    dataType: 'json',
+                    success: function (bugList) {
+                        self.bugs.removeAll();
+                        for (var i = 0; i < bugList.length; i++) {
+                            var item = bugList[i];
+                            self.bugs.push(self.getBugReportFromJson(item));
+                        }
+                    },
+                    async: false
+                });
+            };
 
             self.totalCharge = ko.computed(function () {
                 var total = 0;
@@ -178,8 +182,17 @@
             }
         };
         
-        $.connection.hub.start();
-        ko.applyBindings(viewModels.bugs);
+        $.connection.hub.error(function(error) {
+            alert("Connection error: " + error);
+        });
 
+        $.connection.hub.reconnected(function() {
+            viewModels.bugs.listBugs();
+        });
+
+        $.connection.hub.start(function() {
+            ko.applyBindings(viewModels.bugs);
+            viewModels.bugs.listBugs();
+        });
     });
 })(window, document)

@@ -34,7 +34,7 @@ namespace Cinteros.Labs.SpringConf2012 {
 
         public void Update(Bug updatedBug) {
             using(var session = _store.OpenSession()) {
-                var exisitingBug = session.Load<Bug>(updatedBug.ID);
+                var exisitingBug = session.Load<Bug>(updatedBug.Id);
                 if(exisitingBug == null) {
                     return;
                 }

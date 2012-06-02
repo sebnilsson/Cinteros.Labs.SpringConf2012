@@ -10,7 +10,6 @@ namespace Cinteros.Labs.SpringConf2012 {
         }
 
         public Bug(BugPriority priority) {
-            ID = Guid.NewGuid();
             Priority = priority ?? BugPriority.Normal;
         }
 
@@ -19,7 +18,7 @@ namespace Cinteros.Labs.SpringConf2012 {
         [DataMember(Name = "hours")]
         public double Hours { get; set; }
         [DataMember(Name = "id")]
-        public Guid ID { get; set; }
+        public string Id { get; set; }
         [DataMember(Name = "name")]
         public string Name { get; set; }
         [DataMember(Name = "priority")]
