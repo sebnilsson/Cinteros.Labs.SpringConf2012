@@ -54,8 +54,6 @@
                 url: '/api/Bugs/',
                 dataType: 'json',
                 success: function (bugList) {
-                    console.log('BugList:');
-                    console.log(bugList);
                     for (var i = 0; i < bugList.length; i++) {
                         var item = bugList[i];
                         self.bugs.push(self.getBugReportFromJson(item));
@@ -156,11 +154,9 @@
         var bugsHub = $.connection.bugsHub;
         
         bugsHub.addBug = function(bug) {
-            console.log('SignalR told me to add...');
             viewModels.bugs.bugs.push(viewModels.bugs.getBugReportFromJson(bug));
         };
         bugsHub.updateBug = function(bug, priorityIndex) {
-            console.log('SignalR told me to update...');
             var bugs = viewModels.bugs.bugs();
             for (var i = 0; i < bugs.length; i++) {
                 var existingBug = bugs[i];
@@ -173,7 +169,6 @@
             }
         };
         bugsHub.removeBug = function(bug) {
-            console.log('SignalR told me to delete...');
             var bugs = viewModels.bugs.bugs();
             for (var i = 0; i < bugs.length; i++) {
                 var existingBug = bugs[i];
