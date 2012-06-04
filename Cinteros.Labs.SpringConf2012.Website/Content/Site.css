@@ -58,3 +58,16 @@
 #add-table input {
     width: 100%;
 }
+
+nav {
+    float: right;
+    border: 1px solid #555;
+}
+nav ul {
+    margin: 0.5em 0px;
+    padding: 0px;
+}
+nav ul li {
+    display: inline;
+    padding: 0.5em;
+}

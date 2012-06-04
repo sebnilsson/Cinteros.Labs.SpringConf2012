@@ -1,3 +1,14 @@
+@using SquishIt.Mvc
+@section BottomScripts {
+    @(Html.BundleJavaScript()
+        .Add("~/Scripts/jquery-1.7.2.js")
+        .Add("~/Scripts/knockout-2.1.0.debug.js")
+        .Add("~/Scripts/jquery.signalR-0.5.0.js")
+        .Add("~/Content/Site.js")
+        .MvcRender("~/bundled-scripts.js"))
+    <script src="~/signalr/hubs" type="text/javascript"></script>
+}
+
 <h2>Bug-reports</h2>
 
 <table id="data-table">
@@ -27,18 +38,6 @@
         </tr>
     </tbody>
 </table>
-
-@*<table id="add-table">
-    <tr>
-        <td class="col-title"><input id="add-title" /></th>
-        <td class="col-prio"><input id="add-prio" /></th>
-        <td class="col-multi"><input id="add-multi" /></th>
-        <td class="col-hours"><input id="add-hours" /></th>
-        <td class="col-row-cost"><input id="add-row-cost" /></th>
-        <td class="col-desc"><input id="add-desc" /></th>
-        <td class="col-controls"> </th>
-    </tr>
-</table>*@
 
 <div>
     @*<button data-bind="click: addBug, enable: bugs().length < 10">Add bug</button>(max 10)*@

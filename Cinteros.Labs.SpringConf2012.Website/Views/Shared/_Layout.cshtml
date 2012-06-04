@@ -27,21 +27,16 @@
 </head>
 <body>
     <div id="main-wrapper">
-        @*<nav>
+        <nav>
             <ul>
-                <li>@Html.ActionLink("Lists and collections", "")</li>
+                <li>@Html.ActionLink("Bugs", "")</li>
+                <li>@Html.ActionLink("About", "About")</li>
             </ul>
-        </nav>*@
+        </nav>
         <div id="content"></div>
         @RenderBody()
     </div>
 
-    @(Html.BundleJavaScript()
-        .Add("~/Scripts/jquery-1.7.2.js")
-        .Add("~/Scripts/knockout-2.1.0.debug.js")
-        .Add("~/Scripts/jquery.signalR-0.5.0.js")
-        .Add("~/Content/Site.js")
-        .MvcRender("~/bundled-scripts.js"))
-    <script src="~/signalr/hubs" type="text/javascript"></script>
+    @RenderSection("BottomScripts", false)
 </body>
 </html>
