@@ -140,7 +140,8 @@
 
                 $.ajax({
                     type: 'DELETE',
-                    url: '/api/Bugs/' + bug.id,
+                    url: '/api/Bugs/',
+                    data: { id: bug.id },
                     dataType: 'json',
                     success: function () {
                         bugsHub.bugRemoved(bug);
