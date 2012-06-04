@@ -27,6 +27,12 @@ namespace Cinteros.Labs.SpringConf2012.Website {
             );
 
             routes.MapRoute(
+                name: "About",
+                url: "about",
+                defaults: new { controller = "Home", action = "About" }
+            );
+
+            routes.MapRoute(
                 name: "Empty",
                 url: "",
                 defaults: new { controller = "Home", action = "Index" }
