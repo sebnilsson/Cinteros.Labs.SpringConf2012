@@ -1,46 +1,61 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
+using System.Linq;
 using System.Web.Http;
 
-namespace Cinteros.Labs.SpringConf2012.Website.Controllers {
-    public class BugsController : ApiController {
-        private static BugRepository _repository;
+namespace Cinteros.Labs.SpringConf2012.Website.Controllers
+{
+    public class BugsController : ApiController
+    {
+        private const string NamePrefix = "Bug";
+        private static readonly BugRepository Repository;
 
-        static BugsController() {
+        static BugsController()
+        {
             string connectionString = ConfigurationManager.AppSettings["RAVENHQ_CONNECTION_STRING"];
-            _repository = new BugRepository(connectionString);
+            Repository = new BugRepository(connectionString);
         }
 
-        public IEnumerable<Bug> Get() {
-            return _repository.List();
+        public IEnumerable<Bug> Get()
+        {
+            return Repository.List();
         }
 
-        public Bug Post(Bug bug) {
-            _repository.Add(bug);
+        public Bug Post(Bug bug)
+        {
+            string uniqueName = GetUniqueName();
+            bug.Name = uniqueName;
+            bug.PriorityIndex = 1;
+
+            Repository.Add(bug);
             return bug;
         }
 
-        public void Put(Bug bug, int priorityIndex) {
-            switch(priorityIndex) {
-                case 0:
-                    bug.Priority = BugPriority.Low;
-                    break;
-                case 2:
-                    bug.Priority = BugPriority.High;
-                    break;
-                case 3:
-                    bug.Priority = BugPriority.Critial;
-                    break;
-                default:
-                    bug.Priority = BugPriority.Normal;
-                    break;
-            }
-
-            _repository.Update(bug);
+        public Bug PutBug(int id, Bug bug)
+        {
+            Repository.Update(bug);
+            return bug;
         }
 
-        public void Delete(string id) {
-            _repository.Delete(id);
+        public bool Delete(string id)
+        {
+            return Repository.Delete(id);
+        }
+
+        private static string GetUniqueName()
+        {
+            var allPosts = Repository.List();
+
+            int index = 1;
+            string uniqueName;
+            do
+            {
+                uniqueName = string.Format("{0} {1}", NamePrefix, index);
+                index++;
+            }
+            while (allPosts.Any(x => x.Name.Equals(uniqueName, StringComparison.InvariantCultureIgnoreCase)));
+            return uniqueName;
         }
     }
 }

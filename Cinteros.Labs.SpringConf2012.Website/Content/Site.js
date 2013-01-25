@@ -2,24 +2,43 @@
     'use strict';
 
     $(function () {
+        var bugsHub = $.connection.bugsHub;
 
+        var getIdNumber = function(idString) {
+            var slashIndex = idString.indexOf('/');
+            return idString.slice(slashIndex + 1);
+        };
+
+        var priorities;
+        $.ajax({
+            type: 'GET',
+            url: '/api/BugPriorities/',
+            dataType: 'json',
+            success: function (data) {
+                priorities = data;
+            },
+            async: false
+        });
+        
         // Class to represent a row in the seat reservations grid
-        var BugReport = function (id, name, priority, hours, description) {
+        var BugReport = function (id, name, priorityIndex, hours, description) {
             var self = this;
 
             self.description = ko.observable(description);
             self.hours = ko.observable(parseFloat(hours) || 0);
             self.id = id;
             self.name = ko.observable(name);
-            self.priority = ko.observable(priority);
+            self.priorityIndex = ko.observable(priorityIndex);
 
             self.multiplier = ko.computed(function () {
-                var prio = self.priority();
+                var index = self.priorityIndex();
+                var prio = priorities[index];
                 return prio ? prio.multiplier + "x" : "None";
             });
 
             self.rowMultiplier = ko.computed(function () {
-                var prio = self.priority();
+                var index = self.priorityIndex();
+                var prio = priorities[index];
                 if (!prio) {
                     return 0;
                 }
@@ -34,20 +53,10 @@
             self.hourlyPrice = 15;
 
             self.getBugReportFromJson = function (jsonObject) {
-                var priority = self.priorities[jsonObject.priority.index];
-                return new BugReport(jsonObject.id, jsonObject.name, priority, jsonObject.hours, jsonObject.description);
+                return new BugReport(jsonObject.id, jsonObject.name, jsonObject.priorityIndex, jsonObject.hours, jsonObject.description);
             };
 
-            self.priorities = [];
-            $.ajax({
-                type: 'GET',
-                url: '/api/BugPriorities/',
-                dataType: 'json',
-                success: function (data) {
-                    self.priorities = data;
-                },
-                async: false
-            });
+            self.priorities = priorities;
 
             self.bugs = ko.observableArray();
             self.listBugs = function() {
@@ -83,19 +92,16 @@
 
                 var title = 'New Bug (' + (self.bugs().length + 1) + ')';
 
-                var data = {
-                    name: title
-                };
-
+                var data = { name: title };
                 $.ajax({
                     type: 'POST',
                     url: '/api/Bugs/',
-                    data: data,
+                    data: JSON.stringify(data),
                     dataType: 'json',
                     success: function (bugItem) {
                         $button.removeAttr('disabled');
 
-                        bugsHub.bugAdded(bugItem);
+                        bugsHub.server.bugAdded(bugItem);
                     },
                     error: function () {
                         $button.removeAttr('disabled');
@@ -107,25 +113,26 @@
                 $button.hide();
                 $button.parents('tr').find('input').attr('disabled', 'disabled');
 
+                var idNumber = getIdNumber(bug.id);
                 var data = {
-                    bug: {
-                        description: bug.description(),
-                        hours: bug.hours(),
-                        id: bug.id,
-                        name: bug.name(),
-                    },
-                    priorityIndex: bug.priority().index
+                    description: bug.description(),
+                    hours: bug.hours(),
+                    id: bug.id,
+                    name: bug.name(),
+                    priorityIndex: bug.priorityIndex()
                 };
                 $.ajax({
                     type: 'PUT',
-                    url: '/api/Bugs/',
-                    data: data,
+                    url: '/api/Bugs/' + idNumber,
+                    data: JSON.stringify(data),
+                    cache: false,
+                    contentType: 'application/json; charset=utf-8',
                     dataType: 'json',
                     success: function (jsonData) {
                         $button.show();
                         $button.parents('tr').find('input').removeAttr('disabled');
 
-                        bugsHub.bugUpdated(data.bug, data.priorityIndex || 0);
+                        bugsHub.server.bugUpdated(jsonData, jsonData.priorityIndex || 0);
                     },
                     error: function () {
                         $button.show();
@@ -138,13 +145,13 @@
                 $button.hide();
                 $button.parents('tr').find('input').attr('disabled', 'disabled');
 
+                var idNumber = getIdNumber(bug.id);
                 $.ajax({
                     type: 'DELETE',
-                    url: '/api/Bugs/',
-                    data: { id: bug.id },
+                    url: '/api/Bugs/' + idNumber,
                     dataType: 'json',
                     success: function () {
-                        bugsHub.bugRemoved(bug);
+                        bugsHub.server.bugRemoved(bug);
                     },
                     error: function () {
                         $button.show();
@@ -155,13 +162,11 @@
         };
 
         var viewModels = { bugs: new BugsViewModel() };
-
-        var bugsHub = $.connection.bugsHub;
         
-        bugsHub.addBug = function(bug) {
+        bugsHub.client.addBug = function(bug) {
             viewModels.bugs.bugs.push(viewModels.bugs.getBugReportFromJson(bug));
         };
-        bugsHub.updateBug = function(bug, priorityIndex) {
+        bugsHub.client.updateBug = function (bug, priorityIndex) {
             var bugs = viewModels.bugs.bugs();
             for (var i = 0; i < bugs.length; i++) {
                 var existingBug = bugs[i];
@@ -169,11 +174,11 @@
                     existingBug.description(bug.description);
                     existingBug.hours(bug.hours);
                     existingBug.name(bug.name);
-                    existingBug.priority = ko.observable(viewModels.bugs.priorities[priorityIndex]);
+                    existingBug.priorityIndex(bug.priorityIndex);
                 }
             }
         };
-        bugsHub.removeBug = function(bug) {
+        bugsHub.client.removeBug = function (bug) {
             var bugs = viewModels.bugs.bugs();
             for (var i = 0; i < bugs.length; i++) {
                 var existingBug = bugs[i];
